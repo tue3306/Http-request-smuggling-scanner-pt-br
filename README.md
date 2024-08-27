@@ -3,7 +3,6 @@
 
 HTTP request smuggling é uma vulnerabilidade de alta severidade que é uma técnica onde um atacante "esmurra" uma requisição HTTP ambígua para contornar controles de segurança e obter acesso não autorizado para realizar atividades maliciosas. A vulnerabilidade foi descoberta em 2005 por [Watchfire](https://www.cgisecurity.com/lib/HTTP-Request-Smuggling.pdf) e mais tarde, em agosto de 2019, foi redescoberta por [James Kettle - (albinowax)](https://twitter.com/albinowax) e apresentada na [DEF CON 27](https://www.youtube.com/watch?v=w-eJM2Pc0KI) e [Black-Hat USA](https://www.youtube.com/watch?v=_A04msdplXs). Para saber mais sobre essa vulnerabilidade, você pode consultar seus bem documentados blogs de pesquisa no [site da Portswigger](https://portswigger.net/research/http-desync-attacks-request-smuggling-reborn). A ideia por trás desta ferramenta de segurança é detectar a vulnerabilidade de HRS (HTTP Request Smuggling) para um determinado host, e a detecção ocorre com base na técnica de atraso de tempo com as permutações fornecidas. 
 
-<img src="screenshots/thumbnail.png"/>
 
 ### **Visão Geral Técnica**
 
