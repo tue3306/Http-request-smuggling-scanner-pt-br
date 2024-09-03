@@ -16,13 +16,13 @@ colorama.init()
 utils = Utils()
 constants = Constants()
 
-# Argument parser
-parser = argparse.ArgumentParser(description='HTTP Request Smuggling vulnerability detection tool')
-parser.add_argument("-u", "--url", help="set the target url")
-parser.add_argument("-urls", "--urls", help="set list of target urls, i.e (urls.txt)")
-parser.add_argument("-t", "--timeout", help="set socket timeout, default - 10")
-parser.add_argument("-m", "--method", help="set HTTP Methods, i.e (GET or POST), default - POST")
-parser.add_argument("-r", "--retry", help="set the retry count to re-execute the payload, default - 2")
+# Analisador de argumentos
+parser = argparse.ArgumentParser(description='Ferramenta de detecção de vulnerabilidades de HTTP Request Smuggling')
+parser.add_argument("-u", "--url", help="define a URL alvo")
+parser.add_argument("-urls", "--urls", help="define a lista de URLs alvo, por exemplo (urls.txt)")
+parser.add_argument("-t", "--timeout", help="define o tempo limite do socket, padrão - 10")
+parser.add_argument("-m", "--method", help="define os Métodos HTTP, por exemplo (GET ou POST), padrão - POST")
+parser.add_argument("-r", "--retry", help="define o número de tentativas para reexecutar o payload, padrão - 2")
 args = parser.parse_args()
 
 
@@ -38,7 +38,7 @@ def hrs_detection(_host, _port, _path, _method, permute_type, content_length_key
     permute_type = "[" + permute_type + "]"
     elapsed_time = "-"
 
-    # Print Styling
+    # Estilo de impressão
     _style_space_config = "{:<30}{:<25}{:<25}{:<25}{:<25}"
     _style_permute_type = colored(permute_type, constants.cyan, attrs=['bold'])
     _style_smuggle_type = colored(smuggle_type, constants.magenta, attrs=['bold'])
@@ -62,14 +62,14 @@ def hrs_detection(_host, _port, _path, _method, permute_type, content_length_key
         if len(response.split()) > 0:
             status_code = response.split()[1]
         else:
-            status_code = 'NO RESPONSE'
+            status_code = 'SEM RESPOSTA'
         _style_status_code = colored(status_code, constants.blue, attrs=['bold'])
 
         connection.close_connection()
 
-        # The detection logic is based on the time delay technique, if the elapsed time is more than the timeout value
-        # then the target host status will change to [HRS → Vulnerable], but most of the time chances are it can be
-        # false positive So to confirm the vulnerability you can use burp-suite turbo intruder and try your own
+        # A lógica de detecção é baseada na técnica de atraso de tempo, se o tempo decorrido for maior que o valor do tempo limite
+        # então o status do host alvo mudará para [HRS → Vulnerável], mas na maioria das vezes pode haver
+        # falso positivo. Para confirmar a vulnerabilidade, você pode usar o burp-suite turbo intruder e testar seus próprios
         # payloads. https://portswigger.net/web-security/request-smuggling/finding
 
         elapsed_time = str(round((end_time - start_time) % 60, 2)) + "s"
@@ -77,7 +77,7 @@ def hrs_detection(_host, _port, _path, _method, permute_type, content_length_key
 
         is_hrs_found = connection.detect_hrs_vulnerability(start_time, _timeout)
 
-        # If HRS found then it will write the payload to the reports directory
+        # Se HRS encontrado, o payload será gravado no diretório de relatórios
         if is_hrs_found:
             _style_status = colored(constants.delayed_response_msg, constants.red, attrs=['bold'])
             _reports = constants.reports + '/{}/{}-{}{}'.format(_host, permute_type, smuggle_type, constants.extenstion)
@@ -94,21 +94,21 @@ def hrs_detection(_host, _port, _path, _method, permute_type, content_length_key
     print(_style_space_config.format(_style_permute_type, _style_smuggle_type, _style_status_code, _style_elapsed_time,
                                      _style_status))
 
-    # There is a delay of 1 second after executing each payload
+    # Há um atraso de 1 segundo após a execução de cada payload
     time.sleep(1)
 
 
 if __name__ == "__main__":
-    # If the python version less than 3.x then it will exit
+    # Se a versão do Python for menor que 3.x, o programa será encerrado
     if sys.version_info < (3, 0):
         print(constants.python_version_error_msg)
         sys.exit(1)
 
     try:
-        # Printing the tool header
+        # Imprime o cabeçalho da ferramenta
         utils.print_header()
 
-        # Both (url/urls) options not allowed at the same time
+        # As opções (url/urls) não são permitidas ao mesmo tempo
         if args.urls and args.url:
             print(constants.invalid_url_options)
             sys.exit(1)
@@ -118,7 +118,7 @@ if __name__ == "__main__":
             urls = utils.read_target_list(args.urls)
 
             if constants.file_not_found in urls:
-                print(f"[{args.urls}] not found in your local directory")
+                print(f"[{args.urls}] não encontrado no seu diretório local")
                 sys.exit(1)
             target_urls = urls
 
@@ -133,9 +133,9 @@ if __name__ == "__main__":
                 port = json_res['port']
                 path = json_res['path']
 
-                # If host is invalid then it will exit
+                # Se o host for inválido, o programa será encerrado
                 if host is None:
-                    print(f"Invalid host - {host}")
+                    print(f"Host inválido - {host}")
                     sys.exit(1)
 
                 method = args.method.upper() if args.method else "POST"
@@ -147,7 +147,7 @@ if __name__ == "__main__":
                 timeout = int(args.timeout) if args.timeout else 10
                 retry = int(args.retry) if args.retry else 2
 
-                # To detect the HRS it requires at least 1 retry count
+                # Para detectar o HRS é necessário pelo menos 1 contagem de retry
                 if retry == 0:
                     print(constants.invalid_retry_count)
                     sys.exit(1)
@@ -159,11 +159,11 @@ if __name__ == "__main__":
 
                 target_header_style_config = '{:<1}{}{:<25}{:<16}{:<10}'
                 print(target_header_style_config.format('', square_sign,
-                                                        colored("Target URL", constants.magenta, attrs=['bold']),
+                                                        colored("URL Alvo", constants.magenta, attrs=['bold']),
                                                         colored(":", constants.magenta, attrs=['bold']),
                                                         colored(url, constants.blue, attrs=['bold'])))
                 print(target_header_style_config.format('', square_sign,
-                                                        colored("Method", constants.magenta, attrs=['bold']),
+                                                        colored("Método", constants.magenta, attrs=['bold']),
                                                         colored(":", constants.magenta, attrs=['bold']),
                                                         colored(method, constants.blue, attrs=['bold'])))
                 print(target_header_style_config.format('', square_sign,
@@ -177,7 +177,7 @@ if __name__ == "__main__":
 
                 reports = os.path.join(str(Path().absolute()), constants.reports, host)
                 print(target_header_style_config.format('', square_sign,
-                                                        colored("HRS Reports", constants.magenta, attrs=['bold']),
+                                                        colored("Relatórios HRS", constants.magenta, attrs=['bold']),
                                                         colored(":", constants.magenta, attrs=['bold']),
                                                         colored(reports, constants.blue, attrs=['bold'])))
                 print()
@@ -189,7 +189,7 @@ if __name__ == "__main__":
 
                 for permute in data[constants.permute]:
                     for d in data[constants.detection]:
-                        # Based on the retry value it will re-execute the same payload again
+                        # Com base no valor de retry, o mesmo payload será reexecutado
                         for _ in range(retry):
                             transfer_encoding_obj = permute[constants.transfer_encoding]
                             hrs_detection(host, port, path, method, permute[constants.type],
