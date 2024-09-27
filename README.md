@@ -1,3 +1,6 @@
+# Tutorial: Ferramenta de Detecção de Vulnerabilidades de HTTP Request Smuggling
+
+Este script Python é uma ferramenta projetada para detectar vulnerabilidades de HTTP Request Smuggling. Ele funciona em **sistemas Linux** e realiza a detecção através do envio de payloads específicos para o servidor alvo.
 
 ### **Instalação**
 
